@@ -44,6 +44,4 @@ pipeline {
         }
     }
 }
-////hhhhhhhhhhhhhhhhhh
-////hh
-///ssss
+////hhhhhhhhhhhhhhh
