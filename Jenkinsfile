@@ -36,6 +36,8 @@ pipeline {
                         set -e
                         kubectl get nodes
                         kubectl apply -f k8s/
+                        kubectl set image deployment/nodeapp nodeapp=$IMAGE
+                        kubectl rollout status deployment/nodeapp --timeout=180s
                     '''
                 }
             }
