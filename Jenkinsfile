@@ -21,18 +21,20 @@ pipeline {
         stage('Push Docker Image') {
             steps {
                 withCredentials([usernamePassword(credentialsId: 'dockerhub-creds', passwordVariable: 'PASS', usernameVariable: 'USER')]) {
-                    sh 'echo $PASS | docker login -u $USER --password-stdin'
-                    sh 'docker push $IMAGE'
+                    sh '''
+                        echo "$PASS" | docker login -u "$USER" --password-stdin
+                        docker push $IMAGE
+                    '''
                 }
             }
         }
 
         stage('Deploy to Kubernetes') {
             steps {
-                withCredentials([string(credentialsId: 'kubeconfig-k3s', variable: 'KUBECONFIG_CONTENT')]) {
-                    writeFile file: 'kubeconfig.yaml', text: KUBECONFIG_CONTENT
+                withCredentials([file(credentialsId: 'kubeconfig-k3s', variable: 'KUBECONFIG')]) {
                     sh '''
-                        export KUBECONFIG=$PWD/kubeconfig.yaml
+                        set -e
+                        kubectl get nodes
                         kubectl apply -f k8s/
                     '''
                 }
